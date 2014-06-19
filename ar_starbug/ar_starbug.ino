@@ -40,8 +40,8 @@ void serialEvent()
         char incomingChar = (char)Serial.read();
         message += incomingChar;
     }
-    if(message == "read_sensor"){
-        sensorDataToSerial();
+    if(message == "read_sensor_data"){
+        snedSensorDataToSerial();
     }
 }
 
@@ -66,7 +66,7 @@ void readBMP180(struct SensorData *sd)
 }
 
 
-void sensorDataToSerial(void)
+void snedSensorDataToSerial(void)
 {
     Serial.print("temp_f:");
     Serial.print(sd.tempF);
