@@ -6,7 +6,35 @@
 Adafruit_BMP085_Unified bmp = Adafruit_BMP085_Unified(10085);
 
 
-void setup()
+typedef struct SensorData
+{
+    float tempF;
+    float tempC;
+    float pressure;
+};
+
+
+float celsiusToFahrenheit(float celsius)
+{
+    return (1.8 * celsius) + 32;
+}
+
+
+void readBMP180(struct SensorData *sd)
+{
+    sensors_event_t event;
+    bmp.getEvent(&event);
+
+    float tempC;
+    bmp.getTemperature(&tempC);
+
+    sd->pressure = event.pressure;
+    sd->tempC = tempC;
+    sd->tempF = celsiusToFahrenheit(tempC);
+}
+
+
+void setup(void)
 {
     Serial.begin(9600);
 
@@ -17,34 +45,22 @@ void setup()
 }
 
 
-void loop()
+void loop(void)
 {
+    SensorData sd;
+    readBMP180(&sd);
 
-}
+    Serial.print("Pressure: ");
+    Serial.println(sd.pressure);
+    Serial.println("");
 
+    Serial.print("Temp (F): ");
+    Serial.println(sd.tempF);
+    Serial.println("");
 
-struct SensorData {
-    float tempF;
-    float tempC;
-    float pressure;
-};
+    Serial.print("Temp (C): ");
+    Serial.println(sd.tempC);
+    Serial.println("");
 
-
-float celsiusToFahrenheit(float celsius)
-{
-    return ((9/5) * celsius) + 32;
-}
-
-
-void readBMP180(struct& sensorData)
-{
-    sensors_event_t event;
-    bmp.getEvent(&event);
-
-    float tempC;
-    bmp.getTemperature(&tempC);
-
-    sensorData.pressure = event.pressure;
-    sensorData.tempC = tempC;
-    sensorData.tempF = celsiusToFahrenheit(tempC);
+    delay(3000);
 }
