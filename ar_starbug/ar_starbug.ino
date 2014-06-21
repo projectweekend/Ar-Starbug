@@ -29,20 +29,8 @@ void setup(void)
 void loop(void)
 {
     readBMP180(&sd);
-}
-
-
-void serialEvent()
-{
-    String message = "";
-    while (Serial.available())
-    {
-        char incomingChar = (char)Serial.read();
-        message += incomingChar;
-    }
-    if(message == "read_sensor_data"){
-        snedSensorDataToSerial();
-    }
+    sendSensorDataToSerial();
+    delay(5000);
 }
 
 
@@ -66,7 +54,7 @@ void readBMP180(struct SensorData *sd)
 }
 
 
-void snedSensorDataToSerial(void)
+void sendSensorDataToSerial(void)
 {
     Serial.print("temp_f:");
     Serial.print(sd.tempF);
@@ -75,5 +63,5 @@ void snedSensorDataToSerial(void)
     Serial.print(sd.tempC);
     Serial.print("|");
     Serial.print("pressure:");
-    Serial.print(sd.pressure);
+    Serial.println(sd.pressure);
 }
