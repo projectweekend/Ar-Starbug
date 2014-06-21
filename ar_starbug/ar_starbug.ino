@@ -30,7 +30,7 @@ void loop(void)
 {
     readBMP180(&sd);
     sendSensorDataToSerial();
-    delay(5000);
+    delay(250);
 }
 
 
