@@ -29,7 +29,7 @@ void setup(void)
 void loop(void)
 {
     if(Serial.available() > 0) {
-        if(Serial.read() == 49) {
+        if(Serial.read() == 82) {
             readBMP180(&sd);
             sendSensorDataToSerial();
         }
