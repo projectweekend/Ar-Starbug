@@ -28,9 +28,12 @@ void setup(void)
 
 void loop(void)
 {
-    readBMP180(&sd);
-    sendSensorDataToSerial();
-    delay(250);
+    if(Serial.available() > 0) {
+        if(Serial.read() == 49) {
+            readBMP180(&sd);
+            sendSensorDataToSerial();
+        }
+    }
 }
 
 
