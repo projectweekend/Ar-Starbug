@@ -48,32 +48,28 @@ void loop(void)
 {
     if(Serial.available() > 0) {
         int command = Serial.read();
+        readBMP180(&sd);
+        readHTU21DF(&sd);
+        readTSL2561(&sd);
         switch (command) {
             // get all sensor data (A)
             case 65:
-                readBMP180(&sd);
-                readHTU21DF(&sd);
-                readTSL2561(&sd);
                 writeAllSensorDataToSerial();
                 break;
             // get temperature only (T)
             case 84:
-                readBMP180(&sd);
                 writeTemperatureDataToSerial();
                 break;
             // get humidity only (H)
             case 72:
-                readHTU21DF(&sd);
                 writeHumdityDataToSerial();
                 break;
             // get pressure only (P)
             case 80:
-                readBMP180(&sd);
                 writePressureDataToSerial();
                 break;
             // get luminosity only (L)
             case 76:
-                readTSL2561(&sd);
                 writeLuminosityDataToSerial();
                 break;
         }
