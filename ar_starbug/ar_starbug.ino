@@ -68,7 +68,6 @@ void loop(void)
                 break;
             // get pressure only (P)
             case 80:
-                readBMP180
                 readBMP180(&sd);
                 writePressureDataToSerial();
                 break;
