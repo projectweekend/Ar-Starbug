@@ -52,8 +52,23 @@ void loop(void)
     // L = 76 (Luminosity)
     // A = 65 (All)
     if(Serial.available() > 0) {
-        Serial.println(Serial.read());
-        if(Serial.read() == 82) {
+        int command = Serial.read();
+        switch (command) {
+            // get all sensor data (A)
+            case 65:
+                readBMP180(&sd);
+                readHTU21DF(&sd);
+                readTSL2561(&sd);
+                writeAllSensorDataToSerial();
+                break;
+            // get temperature only (T)
+            case 84:
+                readBMP180(&sd);
+                writeTemperatureDataToSerial();
+        }
+
+
+        if(command == 65) {
             readBMP180(&sd);
             readHTU21DF(&sd);
             readTSL2561(&sd);
@@ -101,6 +116,37 @@ void readTSL2561(struct SensorData *sd)
     sensors_event_t event;
     tsl.getEvent(&event);
     sd->luminosity = event.light;
+}
+
+
+void writeTemperatureDataToSerial(void)
+{
+    Serial.print("temp_f:");
+    Serial.print(sd.tempF);
+    Serial.print("|");
+    Serial.print("temp_c:");
+    Serial.println(sd.tempC);
+}
+
+
+void writeHumdityDataToSerial(void)
+{
+    Serial.print("humidity:");
+    Serial.println(sd.humidity);
+}
+
+
+void writePressureDataToSerial(void)
+{
+    Serial.print("pressure:");
+    Serial.println(sd.pressure);
+}
+
+
+void writeLuminosityDataToSerial(void)
+{
+    Serial.print("luminosity:");
+    Serial.println(sd.luminosity);
 }
 
 
