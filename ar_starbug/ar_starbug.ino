@@ -46,11 +46,6 @@ void setup(void)
 
 void loop(void)
 {
-    // T = 84 (Temperature)
-    // H = 72 (Humidity)
-    // P = 80 (Pressure)
-    // L = 76 (Luminosity)
-    // A = 65 (All)
     if(Serial.available() > 0) {
         int command = Serial.read();
         switch (command) {
@@ -65,6 +60,23 @@ void loop(void)
             case 84:
                 readBMP180(&sd);
                 writeTemperatureDataToSerial();
+                break;
+            // get humidity only (H)
+            case 72:
+                readHTU21DF(&sd);
+                writeHumdityDataToSerial();
+                break;
+            // get pressure only (P)
+            case 80:
+                readBMP180
+                readBMP180(&sd);
+                writePressureDataToSerial();
+                break;
+            // get luminosity only (L)
+            case 76:
+                readTSL2561(&sd);
+                writeLuminosityDataToSerial();
+                break;
         }
     }
 }
