@@ -2,6 +2,7 @@
 #include <Adafruit_Sensor.h>
 #include <Adafruit_BMP085_U.h>
 #include <Adafruit_HTU21DF.h>
+#include <Adafruit_TSL2561_U.h>
 
 
 typedef struct SensorData
@@ -10,12 +11,14 @@ typedef struct SensorData
     float tempC;
     float humidity;
     float pressure;
+    float luminosity;
 };
 
 // Set some global variables
 SensorData sd;
 Adafruit_BMP085_Unified bmp = Adafruit_BMP085_Unified(10085);
 Adafruit_HTU21DF htu = Adafruit_HTU21DF();
+Adafruit_TSL2561_Unified tsl = Adafruit_TSL2561_Unified(TSL2561_ADDR_FLOAT, 12345);
 
 
 void setup(void)
@@ -31,18 +34,39 @@ void setup(void)
         Serial.println("ERROR: Check HTU21DF wiring");
         while (1);
     }
+
+    if(!tsl.begin()){
+        Serial.print("ERROR: Check TSL2561 wiring");
+        while(1);
+    }
+
+    configureLuminositySensor();
 }
 
 
 void loop(void)
 {
+    // T = 84 (Temperature)
+    // H = 72 (Humidity)
+    // P = 80 (Pressure)
+    // L = 76 (Luminosity)
+    // A = 65 (All)
     if(Serial.available() > 0) {
+        Serial.println(Serial.read());
         if(Serial.read() == 82) {
             readBMP180(&sd);
             readHTU21DF(&sd);
-            sendSensorDataToSerial();
+            readTSL2561(&sd);
+            writeAllSensorDataToSerial();
         }
     }
+}
+
+
+void configureLuminositySensor(void)
+{
+  tsl.enableAutoRange(true);
+  tsl.setIntegrationTime(TSL2561_INTEGRATIONTIME_101MS);
 }
 
 
@@ -72,7 +96,15 @@ void readHTU21DF(struct SensorData *sd)
 }
 
 
-void sendSensorDataToSerial(void)
+void readTSL2561(struct SensorData *sd)
+{
+    sensors_event_t event;
+    tsl.getEvent(&event);
+    sd->luminosity = event.light;
+}
+
+
+void writeAllSensorDataToSerial(void)
 {
     Serial.print("temp_f:");
     Serial.print(sd.tempF);
@@ -84,5 +116,8 @@ void sendSensorDataToSerial(void)
     Serial.print(sd.humidity);
     Serial.print("|");
     Serial.print("pressure:");
-    Serial.println(sd.pressure);
+    Serial.print(sd.pressure);
+    Serial.print("|");
+    Serial.print("luminosity:");
+    Serial.println(sd.luminosity);
 }
