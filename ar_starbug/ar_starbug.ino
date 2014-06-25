@@ -66,14 +66,6 @@ void loop(void)
                 readBMP180(&sd);
                 writeTemperatureDataToSerial();
         }
-
-
-        if(command == 65) {
-            readBMP180(&sd);
-            readHTU21DF(&sd);
-            readTSL2561(&sd);
-            writeAllSensorDataToSerial();
-        }
     }
 }
 
